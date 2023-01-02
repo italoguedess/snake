@@ -1,0 +1,6 @@
+[requires]
+armadillo/10.7.3
+sfml/2.5.1
+
+[generators]
+cmake
