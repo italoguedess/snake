@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 // #include <SFML/Keyboard.hpp>
 #include "core/game.hpp"
+#include "core/actor.hpp"
+#include "core/scenario.hpp"
 
 // ISSUE: apparently can't load a file without its complete path
 
@@ -37,10 +39,11 @@ int main()
   // Scenario_Interface* scenario_interface = &scenario;
   // scenario_interface->start();
 
-  Snake actor;
-  Snake_Interface *actor_interface = &actor;
-  std::cout << actor_interface->get_position().at(0) << std::endl;
-  std::cout << actor_interface->get_position().at(1) << std::endl;
+  Actor actor;
+  // std::cout << actor->get_size() << std::endl;
+  // Snake *actor_interface = &actor;
+  // std::cout << actor_interface->get_position().at(0) << std::endl;
+  // std::cout << actor_interface->get_position().at(1) << std::endl;
 
   while (window.isOpen())
   {

@@ -1,7 +1,6 @@
 #ifndef ACTOR_HPP
 #define ACTOR_HPP
 #include <array>
-#define interface struct
 
 /*
  * Class which will implement all the
@@ -9,21 +8,19 @@
  * the actor
  */
 
-interface Snake_Interface
+class Snake
 {
+public:
   // sets the direction in which the snake is headed
-  virtual void set_direction(char new_direction) = 0;
-  // sets the direction in which the snake is headed
-  virtual std::array<int, 2> get_position() = 0;
+  virtual void point_left() = 0;
+  virtual void point_up() = 0;
+  virtual void point_right() = 0;
+  virtual void point_down() = 0;
   // makes the snake move one step
   virtual void move() = 0;
-  // increments the size of the snake
-  virtual void size_pp() = 0;
-  // gets the size of the snake
-  virtual int get_size() = 0;
 };
 
-class Snake : public Snake_Interface
+class Actor : public Snake
 {
 private:
   // snake's sizes initiates as 1
@@ -34,16 +31,20 @@ private:
   // the direction in which the snake will move
   char direction = 'w';
 public:
-  // sets the direction in which the snake is headed
-  virtual void set_direction(char new_direction);
-  // sets the direction in which the snake is headed
-  virtual std::array<int, 2> get_position();
-  // makes the snake move one step
-  virtual void move();
-  // increments the size of the snake
-  virtual void size_pp();
-  // gets the size of the snake
-  virtual int get_size();
+  // getter an setter methods
+  int get_size();
+  void set_size(int new_size);
+  std::array<int, 2> get_position();
+  void set_position(std::array<int, 2> new_position);
+  char get_direction();
+  void set_direction(char new_direction);
+  // interface methods
+  void point_left();
+  void point_up();
+  void point_right();
+  void point_down();
+  void move();
 };
+
 
 #endif

@@ -1,2 +1,7 @@
 # add_subdirectory(core)
-add_library(game core/game.cpp core/actor.cpp core/scenario.cpp)
+add_library(game STATIC core/game.cpp core/actor.cpp core/scenario.cpp)
+# target_compile_options(game PUBLIC "-pie")
+# target_link_options(game PUBLIC "-pie")
+# target_link_libraries(game "-pie")
+# set_property(TARGET game PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+# target_link_libraries(game CONAN_PKG::sfml)
