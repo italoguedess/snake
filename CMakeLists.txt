@@ -13,6 +13,7 @@ add_executable(snake src/snake.cpp)
 # check_pie_supported()
 
 add_subdirectory(src)
+target_link_libraries(snake game)
 target_link_libraries(snake CONAN_PKG::sfml)
 # set_property(TARGET snake PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 
