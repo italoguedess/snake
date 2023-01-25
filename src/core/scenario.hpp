@@ -8,48 +8,30 @@
 #include <unordered_map>
 
 /* Classes which will implement
- * the all scenario elements
- * like the borders and foo position
+ * all scenario elements
+ * like the borders and food
  */
 
-struct Scenario
-{
-  // randomly positions the food
-  virtual void random_position_food(sf::Vector2u window_size) = 0;
-};
-
-class Grid : public Scenario
+class Scenario
 {
 private:
-  // all possible positions
-  int grid_size = 30;
-  // grid
-  // arma::mat<int, 30> grid;
-  // food position in the grid
-  sf::Sprite food;
-  // sprite
+  // scenario sprite
   sf::Sprite sprite;
-  std::unordered_map<std::string, sf::Sprite> sprites;
+  // food sprite
+  sf::Sprite food;
+  // bounds sprite
+  sf::Sprite bounds;
 public:
   // getter and setter methods
-  int get_grid_size();
-  void set_grid_size(int new_grid_size);
-  sf::Sprite get_food();
-  void set_food(sf::Sprite new_food);
   sf::Sprite get_sprite();
   void set_sprite(sf::Sprite new_sprite);
+  sf::Sprite get_food();
+  void set_food(sf::Sprite new_food);
+  sf::Sprite get_bounds();
+  void set_bounds(sf::Sprite new_bounds);
   // interface methods
   // randomly positions the food inside window region
-  virtual void random_position_food(sf::Vector2u window_size) override
-  {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis_x(0, window_size.x);
-    std::uniform_int_distribution<> dis_y(0, window_size.y);
-    int x = dis_x(gen);
-    int y = dis_y(gen);
-    this->food.setPosition(x, y);
-  }
+  void random_position_food();
 };
 
 #endif

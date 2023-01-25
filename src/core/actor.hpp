@@ -3,6 +3,8 @@
 #include <array>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
+#include <ranges>
 
 /*
  * Class which will implement all the
@@ -24,22 +26,24 @@ struct Actor_Controls
 class Actor : public Actor_Controls
 {
 private:
-  // number of members (head and body) the snake has
-  int size = 1;
   // the direction in which the snake will move
   char direction = 'd';
   // Actor's sprite
-  sf::Sprite sprite;
+  std::vector<sf::Sprite> sprite;
 public:
+  Actor();
   // getter an setter methods
-  int get_size();
-  void set_size(int new_size);
   sf::Vector2f get_position();
   void set_position(sf::Vector2f new_position);
   char get_direction();
   void set_direction(char new_direction);
   sf::Sprite get_sprite();
   void set_sprite(sf::Sprite new_sprite);
+  std::vector<sf::Sprite> get_vector_sprite();
+  void set_vector_sprite(std::vector<sf::Sprite> new_vector_sprite);
+
+  void grow();
+
   // Snake_Back_End methods
   virtual void point_left() override {this->direction = 'a';}
   virtual void point_up() override {this->direction = 'w';}
@@ -50,19 +54,26 @@ public:
     // offsets the position according to the direction
     if(move_step <= 0)
       std::cout << "in actor::move parameter move_step must be >= 0!" << std::endl;
+
+    auto actor_body = this->sprite | std::views::drop(1) | std::views::reverse;
+    for(int i = 0; i < actor_body.size(); i++)
+      // moves actor from back to front
+      actor_body[i].setPosition(actor_body[i+1].getPosition());
+
+    auto &base_sprite = this->sprite.at(0);
     switch(this->direction)
     {
     case 'w':
-      this->sprite.move(0, -1*move_step);
+      base_sprite.move(0, -1*move_step);
       break;
     case 's':
-      this->sprite.move(0, move_step);
+      base_sprite.move(0, move_step);
       break;
     case 'a':
-      this->sprite.move(-1*move_step, 0);
+      base_sprite.move(-1*move_step, 0);
       break;
     case 'd':
-      this->sprite.move(move_step, 0);
+      base_sprite.move(move_step, 0);
       break;
     }
   }

@@ -3,13 +3,12 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 
+Actor::Actor(){this->sprite.emplace_back();}
 // getter an setter methods
-int Actor::get_size(){return this->size;}
-void Actor::set_size(int new_size){this->size = new_size;}
 
-sf::Vector2f Actor::get_position(){return this->sprite.getPosition();}
+sf::Vector2f Actor::get_position(){return this->sprite.at(0).getPosition();}
 void Actor::set_position(sf::Vector2f new_position)
-{this->sprite.setPosition(new_position);}
+{this->sprite.at(0).setPosition(new_position);}
 
 char Actor::get_direction(){return this->direction;}
 void Actor::set_direction(char new_direction)
@@ -22,8 +21,13 @@ void Actor::set_direction(char new_direction)
     this->direction = new_direction;
 }
 
-sf::Sprite Actor::get_sprite(){return this->sprite;}
-void Actor::set_sprite(sf::Sprite new_sprite){this->sprite = new_sprite;}
+sf::Sprite Actor::get_sprite(){return this->sprite.at(0);}
+void Actor::set_sprite(sf::Sprite new_sprite){this->sprite.at(0) = new_sprite;}
+
+std::vector<sf::Sprite> Actor::get_vector_sprite(){return this->sprite;}
+void Actor::set_vector_sprite(std::vector<sf::Sprite> new_vector_sprite){this->sprite = new_vector_sprite;}
+
+void Actor::grow(){this->sprite.emplace_back(this->sprite.at(0));}
 
 // interface methods
 // void Actor::point_left() {this->direction = 'a';}

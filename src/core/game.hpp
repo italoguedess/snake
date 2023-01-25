@@ -30,14 +30,15 @@ class Game : public Game_Interface
   // each step the snake takes offsets its position by
   // its sprite width
   int move_step = 1;
-  // the snake moves in a grid
-  Grid grid;
+  // the snake moves in a scenario
+  Scenario scenario;
   // font
   sf::Text text;
   // window
   sf::RenderWindow window;
 
   bool is_out_of_bounds();
+  bool is_body_eaten();
   bool is_food_eaten();
 
 public:
@@ -48,8 +49,8 @@ public:
   void set_score(int new_score);
   Actor get_snake();
   void set_snake(Actor new_snake);
-  Grid get_grid();
-  void set_grid(Grid new_grid);
+  Scenario get_scenario();
+  void set_scenario(Scenario new_scenario);
   sf::Text get_text();
   void set_text(sf::Text new_text);
 
@@ -59,8 +60,9 @@ public:
     this->window.create(sf::VideoMode(700, 700), "Snake Game");
     // loads the snake scenario and food sprites
     this->snake.set_sprite(sprites.at("snake"));
-    this->grid.set_sprite(sprites.at("scenario"));
-    this->grid.set_food(sprites.at("snake"));
+    this->scenario.set_sprite(sprites.at("scenario"));
+    this->scenario.set_food(sprites.at("food"));
+    this->scenario.set_bounds(sprites.at("bounds"));
     // move_step of actor is defined according to their texture width
     this->move_step = this->snake.get_sprite().getTextureRect().width;
     this->snake.set_position(sf::Vector2f(50, 50));
@@ -70,7 +72,7 @@ public:
   {
     // interface to the snake actor
     Actor_Controls *actor_controls = &this->snake;
-    this->grid.random_position_food(this->window.getSize());
+    this->scenario.random_position_food();
     while(this->window.isOpen())
     {
       sf::Event event;
@@ -107,16 +109,21 @@ public:
 
       if(this->is_out_of_bounds())
         this->window.close();
+      if(this->is_body_eaten())
+        this->window.close();
       if(this->is_food_eaten())
       {
         std::cout << "YES!" << std::endl;
-        this->grid.random_position_food(this->window.getSize());
+        this->scenario.random_position_food();
+        this->snake.grow();
       }
-      // this->window.draw(this->grid.get_sprite());
+      // this->window.draw(this->scenario.get_sprite());
       // draw the scenario
-      this->window.draw(this->grid.get_sprite());
-      this->window.draw(this->snake.get_sprite());
-      this->window.draw(this->grid.get_food());
+      this->window.draw(this->scenario.get_bounds());
+      this->window.draw(this->scenario.get_sprite());
+      for(auto elem : this->snake.get_vector_sprite())
+        this->window.draw(elem);
+      this->window.draw(this->scenario.get_food());
 
       // end the current frame
       this->window.display();
