@@ -3,8 +3,36 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 
-Actor::Actor(){this->sprite.emplace_back();}
+Actor::Actor()
+{
+  this->sprite.emplace_back();
+  this->grow();
+}
 // getter an setter methods
+
+bool Actor::is_snake_turning_on_itself(char new_direction)
+{
+  switch(this->direction)
+  {
+  case 'w': // in case its moving upwards
+    if(new_direction == 's') // snake body is downwards
+      return true;
+    break;
+  case 's': // in case its moving downwards
+    if(new_direction == 'w') // snake body is upwards
+      return true;
+    break;
+  case 'a': // in case its moving to the left
+    if(new_direction == 'd') // snake body is to the right
+      return true;
+    break;
+  case 'd': // in case its moving to the right
+    if(new_direction == 'a') // snake body is to the left
+      return true;
+    break;
+  }
+  return false;
+}
 
 sf::Vector2f Actor::get_position(){return this->sprite.at(0).getPosition();}
 void Actor::set_position(sf::Vector2f new_position)
@@ -16,13 +44,18 @@ void Actor::set_direction(char new_direction)
   std::array<char, 4> valid_directions = {'w', 'a', 's', 'd'};
   // checks if new_direction is of the valid directions
   if(!std::ranges::any_of(valid_directions, [new_direction](char elem){return elem == new_direction;}))
-    std::cout << "invalid direction passed to object of class Actor!" << std::endl;
-  else
+    throw(std::runtime_error("invalid direction passed to object of class Actor!"));
+
+  if(!this->is_snake_turning_on_itself(new_direction))
     this->direction = new_direction;
 }
 
 sf::Sprite Actor::get_sprite(){return this->sprite.at(0);}
-void Actor::set_sprite(sf::Sprite new_sprite){this->sprite.at(0) = new_sprite;}
+void Actor::set_sprite(sf::Sprite new_sprite)
+{
+  for(auto& sprite_elem: this->sprite)
+    sprite_elem = new_sprite;
+}
 
 std::vector<sf::Sprite> Actor::get_vector_sprite(){return this->sprite;}
 void Actor::set_vector_sprite(std::vector<sf::Sprite> new_vector_sprite){this->sprite = new_vector_sprite;}

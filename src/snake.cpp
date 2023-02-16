@@ -13,10 +13,10 @@ int main()
 {
   Game game;
   sf::Texture snake_texture, food_texture, scenario_texture, bounds_texture;
-  snake_texture.loadFromFile("/home/italo/Pictures/wallpapers/fauna.png");
-  food_texture.loadFromFile("/home/italo/Pictures/20220314_20h39m21s_grim.png");
-  scenario_texture.loadFromFile("/home/italo/Pictures/neos-card.png");
-  bounds_texture.loadFromFile("/home/italo/Pictures/20220313_19h52m44s_grim.png");
+  snake_texture.loadFromFile("../include/textures/alien_14.jpg");
+  food_texture.loadFromFile("../include/textures/weird_alien_textures/alien_01_norm.jpg");
+  scenario_texture.loadFromFile("../include/textures/grass.png");
+  bounds_texture.loadFromFile("../include/textures/grassoverlay.png");
   sf::Sprite snake_sprite, food_sprite, scenario_sprite, bounds_sprite;
   snake_sprite.setTexture(snake_texture);
   food_sprite.setTexture(food_texture);
