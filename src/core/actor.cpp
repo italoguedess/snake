@@ -1,14 +1,23 @@
+// Libraries
+
 #include "actor.hpp"
 #include <iostream>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
+
+// Constructor
+// Sets the snake sprite, and makes it 2 blocks wide.
+
 
 Actor::Actor()
 {
   this->sprite.emplace_back();
   this->grow();
 }
-// getter an setter methods
+
+// is_snake_turning_on_itself
+// This method is necessary to prevent the snake from turning over itself.
+
 
 bool Actor::is_snake_turning_on_itself(char new_direction)
 {
@@ -33,6 +42,8 @@ bool Actor::is_snake_turning_on_itself(char new_direction)
   }
   return false;
 }
+
+// Getters and setters
 
 sf::Vector2f Actor::get_position(){return this->sprite.at(0).getPosition();}
 void Actor::set_position(sf::Vector2f new_position)

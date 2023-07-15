@@ -6,9 +6,6 @@
 #include <unordered_map>
 #include <string>
 
-// ISSUE: apparently can't load a file without its complete path
-// ISSUE: texture does't load when called in a library
-
 int main()
 {
   Game game;
@@ -28,9 +25,9 @@ int main()
   bounds_sprite.setTextureRect(sf::IntRect(700, 700, 700, 700));
   scenario_sprite.setPosition(50, 50);
   std::unordered_map<std::string, sf::Sprite> sprites_map ({{"snake", snake_sprite},
-                                                            {"food", food_sprite},
-                                                            {"scenario", scenario_sprite},
-                                                            {"bounds", bounds_sprite}});
+							    {"food", food_sprite},
+							    {"scenario", scenario_sprite},
+							    {"bounds", bounds_sprite}});
 
   game.start(sprites_map);
   game.run();

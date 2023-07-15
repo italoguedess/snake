@@ -1,3 +1,5 @@
+// Beginning and libraries
+
 #ifndef ACTOR_HPP
 #define ACTOR_HPP
 #include <array>
@@ -6,11 +8,9 @@
 #include <vector>
 #include <ranges>
 
-/*
- * Class which will implement all the
- * caracteristics and behaviours of
- * the actor
- */
+// Interface
+// Defining the available behaviours the actor will have.
+
 
 struct Actor_Controls
 {
@@ -23,8 +23,13 @@ struct Actor_Controls
   virtual void move(const int move_step) = 0;
 };
 
+// Class Declaration
+
 class Actor : public Actor_Controls
 {
+
+// Attributes
+
 private:
   // the direction in which the snake will move
   char direction = 'd';
@@ -32,6 +37,9 @@ private:
   std::vector<sf::Sprite> sprite;
   // checks if the snake isn't turning on itself
   bool is_snake_turning_on_itself(char new_direction);
+
+// Declarations
+
 public:
   Actor();
   // getter an setter methods
@@ -48,7 +56,9 @@ public:
 
   void grow();
 
-  // snake moving methods
+// Interface implementation
+
+// snake moving methods
   virtual void point_left() override {this->set_direction('a');}
   virtual void point_up() override {this->set_direction('w');}
   virtual void point_right() override {this->set_direction('d');}
@@ -85,5 +95,6 @@ public:
 
 };
 
+// End
 
 #endif
