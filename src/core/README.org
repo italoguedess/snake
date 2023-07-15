@@ -1,0 +1,254 @@
+#+property: header-args :tangle yes :main no :comments both
+
+* Table of contents :toc:
+- [[Actor]]
+  - [[actor.hpp]]
+    - [[Beginning and libraries]]
+    - [[Interface]]
+    - [[Actor class]]
+      - [[Class Declaration]]
+      - [[Attributes]]
+      - [[Methods]]
+	- [[Declarations]]
+	- [[Interface implementation]]
+    - [[End]]
+  - [[actor.cpp]]
+    - [[Libraries]]
+    - [[Constructor]]
+    - [[is_snake_turning_on_itself]]
+    - [[Getters and setters]]
+
+* Actor
+** actor.hpp
+:properties:
+:header-args: :tangle actor.hpp :main no :comments org
+:end:
+*** Beginning and libraries
+#+begin_src C++
+  #ifndef ACTOR_HPP
+  #define ACTOR_HPP
+  #include <array>
+  #include <SFML/Graphics.hpp>
+  #include <iostream>
+  #include <vector>
+  #include <ranges>
+#+end_src
+
+*** Interface
+Defining the available behaviours the actor will have.
+
+#+begin_src C++
+  struct Actor_Controls
+  {
+    // sets the direction in which the snake is headed
+    virtual void point_left() = 0;
+    virtual void point_up() = 0;
+    virtual void point_right() = 0;
+    virtual void point_down() = 0;
+    // makes the snake move one step
+    virtual void move(const int move_step) = 0;
+  };
+#+end_src
+
+*** Actor class
+**** Class Declaration
+#+begin_src C++
+  class Actor : public Actor_Controls
+  {
+#+end_src
+
+**** Attributes
+#+begin_src C++
+  private:
+    // the direction in which the snake will move
+    char direction = 'd';
+    // Actor's sprite
+    std::vector<sf::Sprite> sprite;
+    // checks if the snake isn't turning on itself
+    bool is_snake_turning_on_itself(char new_direction);
+#+end_src
+
+**** Methods
+***** Declarations
+#+begin_src C++
+  public:
+    Actor();
+    // getter an setter methods
+    sf::Vector2f get_position();
+    void set_position(sf::Vector2f new_position);
+    char get_direction();
+    // set_direction checkes if the direction given is a valid one
+    // and if the snake isn't turning on itself
+    void set_direction(char new_direction);
+    sf::Sprite get_sprite();
+    void set_sprite(sf::Sprite new_sprite);
+    std::vector<sf::Sprite> get_vector_sprite();
+    void set_vector_sprite(std::vector<sf::Sprite> new_vector_sprite);
+
+    void grow();
+#+end_src
+
+***** Interface implementation
+#+begin_src C++
+    // snake moving methods
+    virtual void point_left() override {this->set_direction('a');}
+    virtual void point_up() override {this->set_direction('w');}
+    virtual void point_right() override {this->set_direction('d');}
+    virtual void point_down() override {this->set_direction('s');}
+    virtual void move(const int move_step = 1) override
+    {
+      // offsets the position according to the direction
+      if(move_step <= 0)
+	std::cout << "in actor::move parameter move_step must be >= 0!" << std::endl;
+
+      auto actor_body = this->sprite | std::views::drop(1) | std::views::reverse;
+      // moves actor from back to front
+      for(int i = 0; i < actor_body.size(); i++)
+	//
+	actor_body[i].setPosition(actor_body[i+1].getPosition());
+
+      auto &base_sprite = this->sprite.at(0);
+      switch(this->direction)
+      {
+      case 'w':
+	base_sprite.move(0, -1*move_step);
+	break;
+      case 's':
+	base_sprite.move(0, move_step);
+	break;
+      case 'a':
+	base_sprite.move(-1*move_step, 0);
+	break;
+      case 'd':
+	base_sprite.move(move_step, 0);
+	break;
+      }
+    }
+
+  };
+
+
+#+end_src
+
+*** End
+#+begin_src C++
+  #endif
+#+end_src
+
+** actor.cpp
+:properties:
+:header-args: :tangle actor.cpp :main no :comments org
+:end:
+*** Libraries
+#+begin_src C++
+  #include "actor.hpp"
+  #include <iostream>
+  #include <algorithm>
+  #include <SFML/Graphics.hpp>
+#+end_src
+
+*** Constructor
+Sets the snake sprite, and makes it 2 blocks wide.
+
+#+begin_src C++
+  Actor::Actor()
+  {
+    this->sprite.emplace_back();
+    this->grow();
+  }
+#+end_src
+
+*** is_snake_turning_on_itself
+This method is necessary to prevent the snake from turning over itself.
+
+#+begin_src C++
+  bool Actor::is_snake_turning_on_itself(char new_direction)
+  {
+    switch(this->direction)
+    {
+    case 'w': // in case its moving upwards
+      if(new_direction == 's') // snake body is downwards
+	return true;
+      break;
+    case 's': // in case its moving downwards
+      if(new_direction == 'w') // snake body is upwards
+	return true;
+      break;
+    case 'a': // in case its moving to the left
+      if(new_direction == 'd') // snake body is to the right
+	return true;
+      break;
+    case 'd': // in case its moving to the right
+      if(new_direction == 'a') // snake body is to the left
+	return true;
+      break;
+    }
+    return false;
+  }
+#+end_src
+
+*** Getters and setters
+#+begin_src C++
+  sf::Vector2f Actor::get_position(){return this->sprite.at(0).getPosition();}
+  void Actor::set_position(sf::Vector2f new_position)
+  {this->sprite.at(0).setPosition(new_position);}
+
+  char Actor::get_direction(){return this->direction;}
+  void Actor::set_direction(char new_direction)
+  {
+    std::array<char, 4> valid_directions = {'w', 'a', 's', 'd'};
+    // checks if new_direction is of the valid directions
+    if(!std::ranges::any_of(valid_directions, [new_direction](char elem){return elem == new_direction;}))
+      throw(std::runtime_error("invalid direction passed to object of class Actor!"));
+
+    if(!this->is_snake_turning_on_itself(new_direction))
+      this->direction = new_direction;
+  }
+
+  sf::Sprite Actor::get_sprite(){return this->sprite.at(0);}
+  void Actor::set_sprite(sf::Sprite new_sprite)
+  {
+    for(auto& sprite_elem: this->sprite)
+      sprite_elem = new_sprite;
+  }
+
+  std::vector<sf::Sprite> Actor::get_vector_sprite(){return this->sprite;}
+  void Actor::set_vector_sprite(std::vector<sf::Sprite> new_vector_sprite){this->sprite = new_vector_sprite;}
+
+  void Actor::grow(){this->sprite.emplace_back(this->sprite.at(0));}
+
+  // interface methods
+  // void Actor::point_left() {this->direction = 'a';}
+  // void Actor::point_up(){this->direction = 'w';}
+  // void Actor::point_right(){this->direction = 'd';}
+  // void Actor::point_down(){this->direction = 's';}
+  // The x coordinate increases from top to bottom
+  // The y coordinate increases from left to right
+  // just like in a matrix
+  // void Actor::move()
+  // {
+  //   // the y coordinate is the first element of the position array
+  //   auto &y = this->position.at(1);
+  //   // the x coordinate is the first element of the position array
+  //   auto &x = this->position.at(0);
+  //   switch(this->direction)
+  //   {
+  //   case 'w':
+  //     y--;
+  //     break;
+
+  //   case 's':
+  //     y++;
+  //     break;
+
+  //   case 'a':
+  //     x--;
+  //     break;
+
+  //   case 'd':
+  //     x++;
+  //     break;
+  //   }
+  // }
+
+#+end_src

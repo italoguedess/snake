@@ -1,0 +1,99 @@
+#+title: C++ Snake Game
+#+author: Italo Guedes
+#+property: header-args :tangle 
+
+* Table of contents :toc:
+- [[Introduction]]
+- [[Installation]]
+  - [[Dependencies]]
+  - [[Conan]]
+  - [[CMake]]
+  - [[Compilation]]
+  - [[Binary]]
+- [[conanfile.txt]]
+- [[CMakeLists.txt]]
+
+* Introduction
+This is a simple snake game I decided to make to study C++ while having
+fun gaming ;D.
+
+* Installation
+** Dependencies
+To install this game you will need only [[https://cmake.org/download/][CMake]] and [[https://conan.io/downloads.html][Conan C/C++ Package Manager]].
+
+~Conan~ will then take care of installing the need packages, namely the [[https://www.sfml-dev.org/][sfml library]].
+
+** Conan
+To use conan you will need to have a conan profile, which tells it your basic system
+info such as operational system, compiler version, etc. in profiles directory inside
+your conan2 installation folder.
+
+Following we have a general profile for linux developers.
+
+#+begin_src dot :tangle no
+[settings]
+arch=x86_64
+build_type=Debug
+compiler=gcc
+compiler.cppstd=20
+compiler.libcxx=libstdc++11
+compiler.version=13
+os=Linux 
+#+end_src
+
+After you configure your profile, you need to run the following command
+~conan install . --output-folder=build --build=missing --profile=your-profile~
+from the directory where the snake game was cloned.
+
+It tells conan to install all dependencies listed on the conanfile, according to your
+system settings in your profile, in a build folder. If a certain dependency has a binary
+in the repository conan uses it by default, but if it does not, conan will build it from
+source.
+
+** CMake
+After installing the dependencies with conan, you will need to run
+~cmake . --list-presets~, so you know the compilation presets configured by conan.
+
+After that run ~cmake . --preset=your-preset~ and you’re good to go.
+
+** Compilation
+To compile your program running ~cmake --build . --preset=your-preset~ should do the
+trick.
+
+** Binary
+The generated binary is moved from the root Snake Game directory to
+~build/Your-Preset/bin~.
+
+* conanfile.txt
+~conanfile.txt~ is needed so Conan knows what packages and their versions are needed.
+
+#+begin_src dot :tangle conanfile.txt
+  [requires]
+  sfml/2.5.1
+
+  [generators]
+  CMakeDeps
+  CMakeToolchain
+#+end_src
+
+* CMakeLists.txt
+~CMakeLists.txt~ is needed so CMake knows the structure of our project to compile.
+
+#+begin_src dot :tangle CMakeLists.txt
+  cmake_minimum_required(VERSION 3.25.1)
+  project(SnakeGame CXX)
+
+  set(CMAKE_CXX_STANDARD 20)
+  set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
+  find_package(SFML REQUIRED)
+
+  add_executable($(PROJECT_NAME) src/snake.cpp)
+
+  # Make all executables be generated in the bin folder
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+  add_subdirectory(src)
+  target_link_libraries(snake game)
+  target_link_libraries(snake SFML::SFML)
+#+end_src
