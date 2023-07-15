@@ -8,7 +8,7 @@
 #include <vector>
 #include <ranges>
 
-// Interface
+// Actor_Controls Interface
 // Defining the available behaviours the actor will have.
 
 
@@ -23,7 +23,7 @@ struct Actor_Controls
   virtual void move(const int move_step) = 0;
 };
 
-// Class Declaration
+// Actor class
 
 class Actor : public Actor_Controls
 {
@@ -94,7 +94,5 @@ public:
   }
 
 };
-
-// End
 
 #endif
