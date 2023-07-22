@@ -5,25 +5,50 @@
 * Table of contents :toc:
 - [[Introduction]]
 - [[Installation]]
-  - [[Dependencies]]
-  - [[Conan]]
-  - [[CMake]]
-  - [[Compilation]]
-  - [[Binary]]
+  - [[The Nix way]]
+    - [[Dependencies]]
+    - [[CMake]]
+    - [[Compilation]]
+  - [[The Conan way]]
+    - [[Dependencies]]
+    - [[CMake]]
+    - [[Compilation]]
+- [[shell.nix]]
 - [[conanfile.txt]]
 - [[CMakeLists.txt]]
 
 * Introduction
-This is a simple snake game I decided to make to study C++ while having
-fun gaming ;D.
+This is a simple snake game I decided to make to study C++ while gaming ;D.
 
 * Installation
-** Dependencies
+There are two ways I provide you for installing this project. A more
+traditional one using the [[https://conan.io/][Conan]] C/C++ package manager, and one using [[https://nixos.org/][Nix]].
+
+The difference is that Conan may not find a binary available for your
+system so it might have to compile the dependencies, while Nix pretty
+much has all the binaries you may need.
+
+** The Nix way
+*** Dependencies
+First you will need to have [[https://nixos.org/download.html][Nix]] installed, then from the project root directory
+run ~nix-shell~ and it will create an environment with all the dependencies needed.
+
+To quit the Nix environment just press Control+d.
+
+*Don't forget to log into the environment when you want to compile things!*
+
+*** CMake
+After entering the Nix enveronment, just run ~cmake .~ from the root directory.
+
+*** Compilation
+~cmake --build .~ should be enough ;D.
+
+** The Conan way
+*** Dependencies
 To install this game you will need only [[https://cmake.org/download/][CMake]] and [[https://conan.io/downloads.html][Conan C/C++ Package Manager]].
 
 ~Conan~ will then take care of installing the need packages, namely the [[https://www.sfml-dev.org/][sfml library]].
 
-** Conan
 To use conan you will need to have a conan profile, which tells it your basic system
 info such as operational system, compiler version, etc. in profiles directory inside
 your conan2 installation folder.
@@ -50,19 +75,30 @@ system settings in your profile, in a build folder. If a certain dependency has 
 in the repository conan uses it by default, but if it does not, conan will build it from
 source.
 
-** CMake
+*** CMake
 After installing the dependencies with conan, you will need to run
 ~cmake . --list-presets~, so you know the compilation presets configured by conan.
 
 After that run ~cmake . --preset=your-preset~ and you’re good to go.
 
-** Compilation
-To compile your program running ~cmake --build . --preset=your-preset~ should do the
+*** Compilation
+To compile your program, running ~cmake --build . --preset=your-preset~ should do the
 trick.
 
-** Binary
-The generated binary is moved from the root Snake Game directory to
-~build/Your-Preset/bin~.
+* shell.nix
+#+begin_src dot :tangle shell.nix
+  { pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/c7a18f89ef1dc423f57f3de9bd5d9355550a5d15.tar.gz") {} }:
+
+  pkgs.mkShell {
+    buildInputs = with pkgs; [
+      cmake
+      gcc
+      ninja
+      sfml
+    ];
+  
+  }
+#+end_src
 
 * conanfile.txt
 ~conanfile.txt~ is needed so Conan knows what packages and their versions are needed.
@@ -86,14 +122,17 @@ The generated binary is moved from the root Snake Game directory to
   set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
-  find_package(SFML REQUIRED)
+  find_package(SFML COMPONENTS system window graphics REQUIRED)
 
-  add_executable($(PROJECT_NAME) src/snake.cpp)
+  add_executable(snake src/snake.cpp)
 
   # Make all executables be generated in the bin folder
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
   add_subdirectory(src)
   target_link_libraries(snake game)
-  target_link_libraries(snake SFML::SFML)
+  target_link_libraries(snake sfml-system)
+  target_link_libraries(snake sfml-window)
+  target_link_libraries(snake sfml-graphics)
+
 #+end_src
