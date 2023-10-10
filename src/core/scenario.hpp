@@ -1,3 +1,5 @@
+// Beginning and libraries
+
 #ifndef SCENARIO_HPP
 #define SCENARIO_HPP
 
@@ -7,13 +9,15 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
-/* Classes which will implement
- * all scenario elements
- * like the borders and food
- */
+// Scenario class
+// Class which will implement all scenario elements like the borders and food.
+
 
 class Scenario
 {
+
+// Attributes
+
 private:
   // scenario sprite
   sf::Sprite sprite;
@@ -21,6 +25,9 @@ private:
   sf::Sprite food;
   // bounds sprite
   sf::Sprite bounds;
+
+// Methods
+
 public:
   // getter and setter methods
   sf::Sprite get_sprite();

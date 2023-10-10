@@ -113,7 +113,6 @@ public:
         this->window.close();
       if(this->is_food_eaten())
       {
-        std::cout << "YES!" << std::endl;
         this->scenario.random_position_food();
         this->snake.grow();
       }
