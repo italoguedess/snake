@@ -1,5 +1,0 @@
-#+title: C++ Snake Game
-#+author: Italo Guedes
-#+property: header-args :tangle 
-
-A simple snake game ;)
